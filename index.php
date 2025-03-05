@@ -1,4 +1,10 @@
-<?php session_start(); ?>
+<?php
+session_start();
+if (!isset($_SESSION['username'])) {
+    header("Location: login.php");
+    exit();
+}
+?>
 <html>
 <head>
     <script type="text/javascript" src="js/adapter.min.js"></script>
@@ -21,7 +27,6 @@
                     ";
                     unset($_SESSION['error']); 
                 }
-
                 if (isset($_SESSION['success'])) {
                     echo "
                     <div class='alert alert-success' style='background:green;color:white;'>
@@ -43,16 +48,17 @@
                 <table class="table table-bordered">
                     <thead>
                         <tr>
-                            <td>ID</td>
-                            <td>STUDENT ID</td>
-                            <td>TIMEIN</td>
-                            <td>TIMEOUT</td>
-                            <td>LOGDATE</td>
-                            <td>STATUS</td>
+                            <th>ID</th>
+                            <th>STUDENT ID</th>
+                            <th>TIMEIN</th>
+                            <th>TIMEOUT</th>
+                            <th>LOGDATE</th>
+                            <th>STATUS</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php
+                        date_default_timezone_set('Asia/Manila');
                         $server = "localhost";
                         $username = "root";
                         $password = "";
@@ -75,10 +81,16 @@
                                     <?php 
                                     echo ($row["TIMEIN"] == NULL || $row["TIMEIN"] == "0000-00-00 00:00:00") 
                                         ? "Not yet timed in" 
-                                        : $row["TIMEIN"]; 
+                                        : date("m/d/Y h:i:s A", strtotime($row["TIMEIN"])); 
                                     ?>
                                 </td>
-                                <td><?php echo ($row["TIMEOUT"] == NULL) ? "Not yet timed out" : $row["TIMEOUT"]; ?></td>
+                                <td>
+                                    <?php 
+                                    echo ($row["TIMEOUT"] == NULL || $row["TIMEOUT"] == "0000-00-00 00:00:00") 
+                                        ? "Not yet timed out" 
+                                        : date("m/d/Y h:i:s A", strtotime($row["TIMEOUT"])); 
+                                    ?>
+                                </td>
                                 <td><?php echo $row["LOGDATE"]; ?></td>
                                 <td>
                                     <?php 
